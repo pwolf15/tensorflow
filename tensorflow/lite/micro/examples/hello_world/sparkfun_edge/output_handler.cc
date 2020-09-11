@@ -17,6 +17,14 @@ limitations under the License.
 
 #include "am_bsp.h"  // NOLINT
 
+#include <string>
+
+// Track whether the function has run at least once
+char result[16] = { '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '\0'};
+int i = 0;
+char target = '+';
+int dir = 1;
+
 /*
 This function uses the device's LEDs to visually indicate the current y value.
 The y value is in the range -1 <= y <= 1. The LEDs (red, green, blue,
@@ -45,6 +53,8 @@ void HandleOutput(tflite::ErrorReporter* error_reporter, float x_value,
     am_devices_led_array_out(am_bsp_psLEDs, AM_BSP_NUM_LEDS, 0x00000000);
 #endif
     is_initialized = true;
+  
+    // str[15] = '\0';
   }
 
   // Set the LEDs to represent negative values
@@ -74,8 +84,21 @@ void HandleOutput(tflite::ErrorReporter* error_reporter, float x_value,
       am_devices_led_off(am_bsp_psLEDs, AM_BSP_LED_YELLOW);
     }
   }
-  // Log the current X and Y values
-  TF_LITE_REPORT_ERROR(error_reporter, "x_value: %f, y_value: %f\n",
-                       static_cast<double>(x_value),
-                       static_cast<double>(y_value));
+
+
+  if (i >= 15 || i < 0)
+  {
+    target = target == '+' ? '-' : '+';
+    dir = -dir;
+  }
+
+  i += dir;
+
+  if (i >= 0 && i < 15)
+  {
+    result[i] = target;
+  }
+
+  TF_LITE_REPORT_ERROR(error_reporter, "%s\n", result);
+
 }
