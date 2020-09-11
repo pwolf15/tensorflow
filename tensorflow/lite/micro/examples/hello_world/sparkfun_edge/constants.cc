@@ -16,4 +16,4 @@ limitations under the License.
 #include "tensorflow/lite/micro/examples/hello_world/constants.h"
 
 // This is tuned so that a full cycle takes ~4 seconds on a SparkFun Edge.
-const int kInferencesPerCycle = 1000;
+const int kInferencesPerCycle = 100;
